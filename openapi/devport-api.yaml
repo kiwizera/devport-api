@@ -1,0 +1,141 @@
+openapi: 3.0.0
+info:
+  title: DevPort API
+  version: 1.0.0
+  description: API for managing developers.
+  contact:
+    name: João Ferreira
+    email: joaosilvaferreira.dev@gmail.com
+    url: https://joaoferreira.vercel.app
+
+servers:
+  - url: https://api.example.com
+
+tags:
+  - name: Developers
+    description: Operations related to developers
+
+paths:
+  /developers:
+    get:
+      tags: [Developers]
+      summary: Retrieve a list of all developers
+      description: |
+        Retrieve a list of all developers
+      operationId: getDevelopers
+      responses:
+        '200':
+          description: A list of developer profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Developer'
+      x-amazon-apigateway-integration:
+        $ref: './aws-integration/developers/get.yaml'
+    post:
+      tags: [Developers]
+      summary: Create a developer
+      description: |
+        Create a developer
+      operationId: postDevelopers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Developer'
+      responses:
+        '201':
+          description: Developer profile created successfully
+      x-amazon-apigateway-integration:
+        $ref: './aws-integration/developers/post.yaml'
+  /developers/{id}:
+    get:
+      tags: [Developers]
+      summary: Retrieve a specific developer
+      description: |
+        Retrieve a specific developer
+      operationId: getDeveloper
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: Unique ID of the developer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Developer profile found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Developer'
+      x-amazon-apigateway-integration:
+        $ref: './aws-integration/developer/get.yaml' 
+    put:
+      tags: [Developers]
+      summary: Update a developer profile
+      description: |
+        Updates details for a given developer
+      operationId: putDeveloper
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: Unique ID of the developer
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Developer'
+      responses:
+        '200':
+          description: Developer updated successfully
+      x-amazon-apigateway-integration:
+        $ref: './aws-integration/developer/put.yaml'
+    delete:
+      tags: [Developers]
+      summary: Delete a developer profile
+      description: |
+        Removes the developer from the system
+      operationId: deleteDeveloper
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: Unique ID of the developer
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Developer deleted successfully
+      x-amazon-apigateway-integration:
+        $ref: './aws-integration/developer/delete.yaml'
+
+components:
+  schemas:
+    Developer:
+      type: object
+      description: Developer information
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+        firstName:
+          type: string
+          description: Developer's first name
+        lastName:
+          type: string
+          description: Developer's last name
+        email: 
+          type: string
+          description: Developer's email
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
