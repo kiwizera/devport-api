@@ -25,7 +25,7 @@ resource "aws_apigatewayv2_route" "get_developers" {
 }
 resource "aws_lambda_function" "get_developers" {
   function_name = "getDevelopers"
-  role          = aws_iam_role.lambda_exec.arn
+  role          = "arn:aws:iam::058264063478:role/devport_lambda_exec"
   handler       = "handler.handler"
   runtime       = "python3.12"
   filename      = "../backend/lambda/get_developers/get_developers.zip"
