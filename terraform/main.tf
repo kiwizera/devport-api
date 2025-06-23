@@ -1,11 +1,6 @@
 resource "aws_iam_role" "lambda_exec" {
   name = "devport_lambda_exec"
 
-  lifecycle {
-    prevent_destroy = true
-    ignore_changes  = [assume_role_policy]
-  }
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
