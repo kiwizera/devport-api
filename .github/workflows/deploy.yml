@@ -1,0 +1,60 @@
+name: Deploy DevPort API
+
+on:
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ap-southeast-2
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 💾 Install pip + zip tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
+
+      - name: 📦 Package all Lambda functions
+        run: |
+          for dir in backend/lambda/*; do
+            if [ -d "$dir" ]; then
+              name=$(basename "$dir")
+              mkdir -p "$dir/package"
+              pip install -r "$dir/requirements.txt" -t "$dir/package"
+              cp "$dir/handler.py" "$dir/package"
+              (cd "$dir/package" && zip -r "../${name}.zip" .)
+              rm -rf "$dir/package"
+            fi
+          done
+
+      - name: 🔄 Convert OpenAPI to JSON
+        run: |
+          pip install pyyaml
+          python -c 'import yaml, json; json.dump(yaml.safe_load(open("openapi/devport-api.yaml")), open("openapi/devport-api.json", "w"))'
+
+      - name: ☁️ Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 🧱 Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: 📦 Terraform Init & Apply
+        working-directory: terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve
