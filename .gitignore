@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Node (if used for frontend or tooling)
+node_modules/
+
+# Lambda zip packages
+*.zip
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.crash/
+.terraform.lock.hcl
+terraform.tfvars
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Log files
+*.log
+
+# Compiled OpenAPI output
+openapi/*.json
+
+# Shell history or secret dumps
+.env
+.env.*
+secrets.*
