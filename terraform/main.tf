@@ -1,5 +1,5 @@
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
-  role       = "arn:aws:iam::058264063478:role/devport_lambda_exec"
+  role       = "devport_lambda_exec"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
